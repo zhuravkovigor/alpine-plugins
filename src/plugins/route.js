@@ -1,6 +1,10 @@
 import Alpine from "alpinejs";
 
-Alpine.store("routeParams", {}); // Initialize routeParams store
+Alpine.store("route", {
+  params: {},
+  data: {},
+  path: window.location.pathname,
+}); // Initialize route store
 
 export const routeDirective =
   () =>
@@ -17,11 +21,19 @@ export const routeDirective =
         }
         history.pushState({}, null, path);
         fetchPage(path);
-        Alpine.store("routeParams", target.params || {}); // Save params in Alpine store
+        Alpine.store("route", {
+          params: target.params || {},
+          data: {},
+          path: path,
+        }); // Save params and path in Alpine store
       } else {
         history.pushState({}, null, target);
         fetchPage(target);
-        Alpine.store("routeParams", {}); // Save empty params in Alpine store
+        Alpine.store("route", {
+          params: {},
+          data: {},
+          path: target,
+        }); // Save empty params and path in Alpine store
       }
     });
   };
@@ -60,10 +72,14 @@ const initialPage =
     ? "/"
     : window.location.pathname.substring(1) + window.location.search;
 
-// Check if there are URL parameters and push them to routeParams
+// Check if there are URL parameters and push them to route store
 const urlParams = new URLSearchParams(window.location.search);
 const params = Object.fromEntries(urlParams.entries());
-Alpine.store("routeParams", params);
+Alpine.store("route", {
+  params: params,
+  data: {},
+  path: window.location.pathname,
+});
 
 fetchPage(initialPage);
 

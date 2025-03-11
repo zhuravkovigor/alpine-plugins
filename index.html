@@ -7,11 +7,124 @@
     <link rel="stylesheet" href="./src/style.css" />
 
     <title>Default title</title>
+
+    <script>
+      const welcomeNav = [
+        { label: "Welcome", href: "/" },
+        { label: "How to use it", href: "./how-to-use" },
+      ];
+
+      const pluginsNav = [
+        { label: "Ajax", href: "/ajax" },
+        { label: "Router", href: "/router" },
+        { label: "Components", href: "/component" },
+        { label: "Title", href: "/title" },
+      ];
+
+      const defaultSearchResult = [...welcomeNav];
+    </script>
   </head>
-  <body>
-    <div id="content" x-data>
-      <h2 x-route="/posts" class="text-3xl">Go to posts</h2>
-    </div>
+  <body class="bg-zinc-900/95 flex text-zinc-100">
+    <aside x-data="modal" class="bg-zinc-800 p-4 min-h-screen w-1/4">
+      <div
+        class="fixed flex items-center justify-center top-0 left-0 bg-black/50 w-full h-full backdrop-blur-sm"
+        :class="isSearchModalOpen ? 'block' : 'hidden'"
+        @click="toggleSearchModal"
+      >
+        <div
+          @click.stop
+          class="bg-white/15 border-4 relative border-zinc-100/15 w-[40%] rounded-2xl overflow-hidden"
+        >
+          <span
+            x-data
+            class="absolute top-3.5 left-3.5"
+            x-component="search-icon-component"
+          ></span>
+          <input
+            type="text"
+            class="font-medium px-14 outline-none w-full p-4"
+            autofocus
+            placeholder="Search"
+          />
+
+          <ul class="p-4">
+            <template x-for="item in defaultSearchResult" :key="item.label">
+              <li
+                x-route="{ path: item.href }"
+                @click="toggleSearchModal"
+                :item="item"
+                x-component="nav-item-component"
+              ></li>
+            </template>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        class="bg-zinc-500/20 hover:bg-zinc-500/30 cursor-pointer p-2 rounded-xl flex items-center gap-3 border border-zinc-700"
+        @click="toggleSearchModal"
+      >
+        <div x-component="search-icon-component"></div>
+        <span class="text-zinc-400 font-medium">Search inside the docs</span>
+      </div>
+
+      <nav class="mt-4">
+        <ul class="flex flex-col gap-1">
+          <template x-for="item in welcomeNav" :key="item.label">
+            <li
+              x-route="{ path: item.href }"
+              :item="item"
+              x-component="nav-item-component"
+            ></li>
+          </template>
+        </ul>
+      </nav>
+
+      <h2 class="text-xl font-bold my-5 mt-8 px-2">Plugins</h2>
+      <nav>
+        <ul class="flex flex-col gap-1">
+          <template x-for="item in pluginsNav" :key="item.label">
+            <li
+              x-route="{ path: item.href }"
+              :item="item"
+              x-component="nav-item-component"
+            ></li>
+          </template>
+        </ul>
+      </nav>
+    </aside>
+
+    <div id="content" class="p-3 px-4 flex-1" x-data></div>
+
+    <template id="nav-item-component">
+      <a
+        class="font-medium rounded-lg p-2 flex"
+        :href="item.href"
+        :class="{ 'bg-zinc-700': $store.route.path === item.href }"
+        x-text="item.label"
+      ></a>
+    </template>
+
+    <template id="search-icon-component">
+      <svg class="w-7" viewBox="0 -0.5 25 25" fill="none">
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M5.5 11.1455C5.49956 8.21437 7.56975 5.69108 10.4445 5.11883C13.3193 4.54659 16.198 6.08477 17.32 8.79267C18.4421 11.5006 17.495 14.624 15.058 16.2528C12.621 17.8815 9.37287 17.562 7.3 15.4895C6.14763 14.3376 5.50014 12.775 5.5 11.1455Z"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M15.989 15.4905L19.5 19.0015"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </template>
 
     <script async src="/src/main.js" type="module"></script>
     <script async src="/src/plugins/ajax.js" type="module"></script>
